@@ -1,25 +1,33 @@
 function [setFeatures] = extractMatrixFeatures(imgData)
     
     nFiles = length(imgData.Files);
-    nFeatures = 2;
+    nFeatures = 1024 + 512;
     
     setFeatures = zeros(nFiles , nFeatures);
     
     for i = 1:nFiles
+        % Image Info
         data = readimage(imgData,i);
         I = rgb2gray(data);
+        [height, width] = size(I);
+        ratio = height / width;
         
-        %Testing Extract features
-        BW = I > 180;
-        SE = strel('disk', 10);
-        BW = imopen(BW, SE);
-        BW = ~BW;
-        CC = bwconncomp(BW);
-        Props = regionprops(CC,  'Solidity', 'EulerNumber' );
-        X = cell2mat(struct2cell(Props))';
+        % cumulated h     
+        h = 1024;
+        w = h / ratio;
+        Itmp = imresize(I, [h w]);
+        BW = Itmp < 180;
+        setFeatures(i, 1:1024) = sum(BW, 2)';
         
-        % features
-        setFeatures(i, :) = X(1, :)';
+        % cumulated v    
+        w = 512;
+        h = w * ratio;
+        Itmp = imresize(I, [h w]);
+        BW = Itmp < 180;
+        setFeatures(i, 1025:nFeatures) = sum(BW)';
+        
+        %        
+        
     end
     
     
