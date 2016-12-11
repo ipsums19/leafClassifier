@@ -2,8 +2,6 @@ function [setFeatures] = extractMatrixFeatures(imgData)
     
     nFiles = length(imgData.Files);
     nFeatures = [1024 512 1];
-    
-    
     setFeatures = zeros(nFiles , sum(nFeatures));
     
     for i = 1:nFiles
@@ -29,13 +27,11 @@ function [setFeatures] = extractMatrixFeatures(imgData)
         
         % stem
         SE1 = strel('disk', 10);
-        SE2 = strel('disk', 5);
+        SE2 = strel('disk', 6);
         E = imopen(BW, SE1);
         E = BW - E;
         E = imopen(E, SE2);
         setFeatures(i, (nFeatures(2)+1):nFeatures(3)) = sum(sum(E));
 
-    end
-    
-    
+    end  
 end
