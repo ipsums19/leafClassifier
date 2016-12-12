@@ -1,8 +1,8 @@
 function [setFeatures] = extractMatrixFeatures(imgData)
     
     nFiles = length(imgData.Files);
-    nFeatures = [1024 512 1 1 1];
-    setFeatures = zeros(nFiles , nFeatures);
+    nFeatures = [1024 512 1 1 1 1];
+    setFeatures = zeros(nFiles , sum(nFeatures));
     
     for i = 1:nFiles
         % Image Info
@@ -60,6 +60,16 @@ function [setFeatures] = extractMatrixFeatures(imgData)
 %         mid2 = sum(sum(R(:,mid:w)));
 %         diff = abs(mid1 - mid2);
 %         setFeatures(i, (sum(nFeatures(1:4))+1):sum(nFeatures(1:5))) = diff;
+
+        %'Eccentricity', 'Solidity', 'Extent'
+        CC = bwconncomp(BW);
+        Props = regionprops(CC, 'Area', 'Extent', 'Eccentricity', 'Solidity');
+        X = cell2mat(struct2cell(Props))';
+        [x y] = max(X(:,1));
+        setFeatures(i, (sum(nFeatures(1:3))+1):sum(nFeatures(1:4))) = X(y,2);
+        setFeatures(i, (sum(nFeatures(1:4))+1):sum(nFeatures(1:5))) = X(y,3);
+        setFeatures(i, (sum(nFeatures(1:5))+1):sum(nFeatures(1:6))) = X(y,4);
+
 
     end  
 end
