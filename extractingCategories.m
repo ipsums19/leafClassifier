@@ -1,9 +1,21 @@
-I = rgb2gray(imread('l5nr001.tif'));
+close all
+I = rgb2gray(imread('data/leaf1/l1nr045.tif'));
+imshow(I);
 BW = I < 180;
-SE1 = strel('disk', 10);
-SE2 = strel('disk', 6);
-E = imopen(BW, SE1);
-E = BW - E;
-E = imopen(E, SE2);
-su = sum(sum(E));
-imshow(E);
+%F = imfill(BW, 'holes');
+%imshow(BW);
+
+% erocionamos
+SE = strel('disk', 100);
+E = imopen(BW, SE);
+
+% contar dientes
+IM = BW - E; figure; %imshow(IM);
+SE = strel('disk', 2);
+IM = imerode(IM, SE); %imshow(IM);
+%IM = bwmorph(IM, 'clean'); figure; imshow(IM);
+C = bwconncomp(IM);
+numObjects = C.NumObjects
+%imshow(E);
+%figure;
+%imshow(I);

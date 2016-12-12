@@ -1,7 +1,7 @@
 function [setFeatures] = extractMatrixFeatures(imgData)
     
     nFiles = length(imgData.Files);
-    nFeatures = [1024 512 1];
+    nFeatures = [1024 512 1 1];
     setFeatures = zeros(nFiles , sum(nFeatures));
     
     for i = 1:nFiles
@@ -23,15 +23,25 @@ function [setFeatures] = extractMatrixFeatures(imgData)
         h = w * ratio;
         Itmp = imresize(I, [h w]);
         BW = Itmp < 180;
-        setFeatures(i, (nFeatures(1)+1):nFeatures(2)) = sum(BW)';
+        setFeatures(i, (sum(nFeatures(1:1))+1):sum(nFeatures(1:2))) = sum(BW)';
         
         % stem
-        SE1 = strel('disk', 10);
-        SE2 = strel('disk', 6);
-        E = imopen(BW, SE1);
-        E = BW - E;
-        E = imopen(E, SE2);
-        setFeatures(i, (nFeatures(2)+1):nFeatures(3)) = sum(sum(E));
+%         SE1 = strel('disk', 10);
+%         SE2 = strel('disk', 6);
+%         E = imopen(BW, SE1);
+%         E = BW - E;
+%         E = imopen(E, SE2);
+%         setFeatures(i, (sum(nFeatures(1:2))+1):sum(nFeatures(1:3))) = sum(sum(E));
+%         
+%         % serrated edge
+%         SE = strel('disk', 100);
+%         E = imopen(BW, SE);
+%         IM = BW - E;
+%         SE = strel('disk', 2);
+%         IM = imerode(IM, SE);
+%         IM = bwmorph(IM, 'clean');
+%         C = bwconncomp(IM);
+%         setFeatures(i, (sum(nFeatures(1:3))+1):sum(nFeatures(1:4))) = C.NumObjects;
 
     end  
 end
