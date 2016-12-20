@@ -1,19 +1,23 @@
 % create repo of images
 categories = genvarname(repmat({'leaf'}, 1, 15), 'leaf');
 imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldernames');
-%categories = {'with','without','maybe'};
-%imds = imageDatastore(fullfile('data/paloTest' , categories), 'LabelSource', 'foldernames');
 
 tbl = countEachLabel(imds);
 
-
-
-K = 5;
+K = 10;
 sumMean = 0;
 confusionMatrix = zeros(15,15);
 for i = 1:K
-    fprintf('K FOLD : %d \n', i)
-    [validationSet, trainingSet] = splitEachLabel(imds, (1/K), 'randomize');
+    fprintf('K FOLD : %d \n', i)    
+    if i == 1
+        [validationSet, trainingSet] = splitEachLabel(imds, (1/K));
+    elseif i == K
+        [trainingSet, validationSet] = splitEachLabel(imds, (1/K));
+    else
+        [P1, P2, P3] = splitEachLabel(imds, (i-1) * (1/K),(1/K)); 
+        trainingSet = imageDatastore([P1.Files ; P3.Files], 'LabelSource', 'foldernames');
+        validationSet = P2;
+    end
     disp([num2str(length(trainingSet.Files)) ' images for training']);
     disp([num2str(length(validationSet.Files)) ' images for Validation']);
     disp('extracting features of training set...');
