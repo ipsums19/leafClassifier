@@ -3,11 +3,11 @@ categories = genvarname(repmat({'leaf'}, 1, 15), 'leaf');
 imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldernames');
 
 disp('extracting features of dataset...');
-dataFeatures = extractMatrixFeatures(imds);
+%dataFeatures = extractMatrixFeatures(imds);
 
 nFeatures = 1543;
 DF = reshape(dataFeatures, [70, 15, nFeatures]);
-LB = reshape(imds.Labels, [70, 15]); 
+LB = reshape(cellstr(imds.Labels), [70, 15]); 
 
 K = 10;
 sumMean = 0;
@@ -45,15 +45,16 @@ for i = 1:K
     
     % accurracy and confusion matrix
     labelValid = reshape ( LB(1:7, :) , [(7*15) 1] );
-    hits = sum (result == labelValid);
+    hits = sum (strcmp(result , labelValid));
     accurracy = hits / length(labelValid);
     fprintf('acurracy : %1.4f \n', accurracy)
     sumMean = sumMean + accurracy;
+    result(1:7)
+    confusionmat(labelValid, result);
     confusionMatrix = confusionMatrix + confusionmat(labelValid, result);
 end
 
-fprintf('Mean Acurracy : %1.4f \n', sumMean / K)
-disp('Confusion Matrix :');
+fprintf('\nMean Acurracy : %1.4f \n', sumMean / K)
 confusionMatrix
 
 
