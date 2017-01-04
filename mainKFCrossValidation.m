@@ -1,10 +1,11 @@
 % create repo of images
 categories = genvarname(repmat({'leaf'}, 1, 15), 'leaf');
 imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldernames');
+[imds , ~] = splitEachLabel(imds, 0.3);
 
 tbl = countEachLabel(imds);
 
-K = 10;
+K = 3;
 sumMean = 0;
 confusionMatrix = zeros(15,15);
 for i = 1:K
@@ -24,7 +25,7 @@ for i = 1:K
     dataTrain = extractMatrixFeatures(trainingSet);
     
     disp('training model ...');
-    t = fitctree(dataTrain, cellstr(trainingSet.Labels));
+    t = fitcknn(dataTrain, cellstr(trainingSet.Labels));
     
     disp('extracting features of validation set...');
     dataValid = extractMatrixFeatures(validationSet);
