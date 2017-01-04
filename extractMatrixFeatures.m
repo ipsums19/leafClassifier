@@ -25,7 +25,7 @@ function [setFeatures] = extractMatrixFeatures(imgData)
         setFeatures(i, (sum(nFeatures(1:1))+1):sum(nFeatures(1:2))) = sum(Itmp)';
         
         %stem
-        BW = imresize(BW, [h w]);
+        %BW = imresize(BW, [h w]);
         SE1 = strel('disk', 10);
         ILeaf = imopen(BW, SE1);
         ILeaf = bwareafilt(ILeaf, 1);

@@ -1,11 +1,11 @@
 % create repo of images
 categories = genvarname(repmat({'leaf'}, 1, 15), 'leaf');
 imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldernames');
-[imds , ~] = splitEachLabel(imds, 0.3);
+%[imds , ~] = splitEachLabel(imds, 0.3);
 
 tbl = countEachLabel(imds);
 
-K = 3;
+K = 10;
 sumMean = 0;
 confusionMatrix = zeros(15,15);
 for i = 1:K
@@ -33,7 +33,7 @@ for i = 1:K
     disp('predicting ...');
     result = predict(t, dataValid);
     
-    % accurracyand confusion matrix
+    % accurracy and confusion matrix
     validResult = cellstr(validationSet.Labels);
     hits = sum (strcmp(result, validResult));
     accurracy = hits / length(validResult);
