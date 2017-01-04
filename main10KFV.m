@@ -5,7 +5,8 @@ imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldername
 disp('extracting features of dataset...');
 dataFeatures = extractMatrixFeatures(imds);
 
-DF = reshape(dataFeatures, [70, 15, 1543]);
+nFeatures = 1543;
+DF = reshape(dataFeatures, [70, 15, nFeatures]);
 LB = reshape(imds.Labels, [70, 15]); 
 
 K = 10;
@@ -15,20 +16,20 @@ for i = 1:K
     fprintf('K FOLD : %d \n', i)     
     
     if i == 1
-        dataTrain = reshape ( DF(8:70, :, :) , [(63*15) 1543] );
-        dataValid = reshape ( DF(1:7, :, :) , [(7*15) 1543] );
+        dataTrain = reshape ( DF(8:70, :, :) , [(63*15) nFeatures] );
+        dataValid = reshape ( DF(1:7, :, :) , [(7*15) nFeatures] );
         labelTrain = reshape ( LB(1:63, :) , [(63*15) 1] );
     elseif i == K
-        dataTrain = reshape ( DF(1:63, :, :) , [(63*15) 1543] );
-        dataValid = reshape ( DF(64:70, :, :) , [(7*15) 1543] );
+        dataTrain = reshape ( DF(1:63, :, :) , [(63*15) nFeatures] );
+        dataValid = reshape ( DF(64:70, :, :) , [(7*15) nFeatures] );
         labelTrain = reshape ( LB(1:63, :) , [(63*15) 1] );
     else
         endd = i * 7;
         init = endd + 8;
 
-        dataTrain1 = reshape ( DF(1:endd, :, :) , [(endd*15) 1543] );
-        dataValid = reshape ( DF((endd+1):(init-1), :, :) , [(7*15) 1543] );
-        dataTrain3 = reshape ( DF(init:70, :, :) , [((70-endd-7)*15) 1543] ); 
+        dataTrain1 = reshape ( DF(1:endd, :, :) , [(endd*15) nFeatures] );
+        dataValid = reshape ( DF((endd+1):(init-1), :, :) , [(7*15) nFeatures] );
+        dataTrain3 = reshape ( DF(init:70, :, :) , [((70-endd-7)*15) nFeatures] ); 
         dataTrain = [dataTrain1 ; dataTrain3];
 
         label1 = reshape ( LB(1:endd, :) , [(endd*15) 1] );
