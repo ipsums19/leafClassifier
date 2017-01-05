@@ -1,20 +1,22 @@
-% create repo of images
+% Create Repo of data
 categories = genvarname(repmat({'leaf'}, 1, 15), 'leaf');
 imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldernames');
 
+% extrat all featrues of all images
 disp('extracting features of dataset...');
-%dataFeatures = extractMatrixFeatures(imds);
+dataFeatures = extractMatrixFeatures(imds);
 
-nFeatures = 1543;
+% reshape to divide the dataset
+nFeatures = 1545;
 DF = reshape(dataFeatures, [70, 15, nFeatures]);
 LB = reshape(cellstr(imds.Labels), [70, 15]); 
 
-K = 10;
+% 10 - fold cross validation
 sumMean = 0;
 confusionMatrix = zeros(15,15);
-for i = 1:K
+for i = 1:10
     fprintf('K FOLD : %d \n', i)     
-    
+    % divide data in train and validation set, depending of k fold
     if i == 1
         dataTrain = reshape ( DF(8:70, :, :) , [(63*15) nFeatures] );
         dataValid = reshape ( DF(1:7, :, :) , [(7*15) nFeatures] );
@@ -37,13 +39,16 @@ for i = 1:K
         labelTrain = [label1 ; label3];
     end    
     
+    % Train the model
     disp('training model ...');
-    t = TreeBagger(500, dataTrain,labelTrain);    
+    t = TreeBagger(500, dataTrain,labelTrain);   
+    %t = fitctree(dataTrain,labelTrain); 
     
+    % Predict the validation set
     disp('predicting ...');
     result = predict(t, dataValid);
     
-    % accurracy and confusion matrix
+    % calculate the accurracy and confusion matrix
     labelValid = reshape ( LB(1:7, :) , [(7*15) 1] );
     hits = sum (strcmp(result , labelValid));
     accurracy = hits / length(labelValid);
@@ -52,7 +57,8 @@ for i = 1:K
     confusionMatrix = confusionMatrix + confusionmat(labelValid, result);
 end
 
-fprintf('\nMean Acurracy : %1.4f \n', sumMean / K)
+% print the result
+fprintf('\nMean Acurracy : %1.4f \n', sumMean / 10)
 confusionMatrix
 
 
