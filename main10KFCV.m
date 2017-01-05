@@ -38,7 +38,7 @@ for i = 1:K
     end    
     
     disp('training model ...');
-    t = fitcknn(dataTrain,labelTrain);    
+    t = TreeBagger(500, dataTrain,labelTrain);    
     
     disp('predicting ...');
     result = predict(t, dataValid);
@@ -49,8 +49,6 @@ for i = 1:K
     accurracy = hits / length(labelValid);
     fprintf('acurracy : %1.4f \n', accurracy)
     sumMean = sumMean + accurracy;
-    result(1:7)
-    confusionmat(labelValid, result);
     confusionMatrix = confusionMatrix + confusionmat(labelValid, result);
 end
 
