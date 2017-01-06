@@ -21,7 +21,7 @@ for i = 1:10
         dataTrain = reshape ( DF(8:70, :, :) , [(63*15) nFeatures] );
         dataValid = reshape ( DF(1:7, :, :) , [(7*15) nFeatures] );
         labelTrain = reshape ( LB(1:63, :) , [(63*15) 1] );
-    elseif i == K
+    elseif i == 10
         dataTrain = reshape ( DF(1:63, :, :) , [(63*15) nFeatures] );
         dataValid = reshape ( DF(64:70, :, :) , [(7*15) nFeatures] );
         labelTrain = reshape ( LB(1:63, :) , [(63*15) 1] );
