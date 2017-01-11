@@ -4,12 +4,12 @@ imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldername
 
 % extrat all featrues of all images
 disp('extracting features of dataset...');
-dataFeatures = extractMatrixFeatures(imds);
+%dataFeatures = extractMatrixFeatures(imds);
 
 % reshape to divide the dataset
 nFeatures = 1545;
 DF = reshape(dataFeatures, [70, 15, nFeatures]);
-LB = reshape(cellstr(imds.Labels), [70, 15]); 
+LB = reshape(imds.Labels, [70, 15]); 
 
 % 10 - fold cross validation
 sumMean = 0;
@@ -41,20 +41,22 @@ for i = 1:10
     
     % Train the model
     disp('training model ...');
-    t = TreeBagger(500, dataTrain,labelTrain);   
+    %t = TreeBagger(500, dataTrain,labelTrain);   
     %t = fitctree(dataTrain,labelTrain); 
+    t = knn(dataTrain,labelTrain); 
     
     % Predict the validation set
     disp('predicting ...');
-    result = predict(t, dataValid);
+    %result = predict(t, dataValid);
+    result = t.predict(dataValid, 1); 
     
     % calculate the accurracy and confusion matrix
     labelValid = reshape ( LB(1:7, :) , [(7*15) 1] );
-    hits = sum (strcmp(result , labelValid));
+    hits = sum (strcmp(cellstr(result) , cellstr(labelValid)));
     accurracy = hits / length(labelValid);
     fprintf('acurracy : %1.4f \n', accurracy)
     sumMean = sumMean + accurracy;
-    confusionMatrix = confusionMatrix + confusionmat(labelValid, result);
+    confusionMatrix = confusionMatrix + confusionmat(cellstr(labelValid), cellstr(result));
 end
 
 % print the result

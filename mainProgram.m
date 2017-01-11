@@ -6,7 +6,7 @@ imds = imageDatastore(fullfile('data/' , categories), 'LabelSource', 'foldername
 
 tbl = countEachLabel(imds);
 
-[trainingSet, validationSet] = splitEachLabel(imds, 0.5, 'randomize');
+[trainingSet, validationSet] = splitEachLabel(imds, 0.1);
 %[validationSet, ~] = splitEachLabel(imds, 0.03, 'randomize');
 
 disp([num2str(length(trainingSet.Files)) ' images for training']);
